@@ -1,4 +1,4 @@
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,41 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq ($(filter-out exynos5,$(TARGET_BOARD_PLATFORM)),)
-
-LOCAL_PATH:= $(call my-dir)
-include $(CLEAR_VARS)
-
-LOCAL_SHARED_LIBRARIES := liblog libutils libcutils libexynosutils libexynosv4l2 libsync libhdmi libdisplay
-
-LOCAL_C_INCLUDES := \
-	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-	$(LOCAL_PATH)/../../exynos5/include \
-	$(TOP)/hardware/samsung_slsi/exynos/include \
-	$(TOP)/hardware/samsung_slsi/exynos/libexynosutils \
-	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/include \
-	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/libhwcmodule \
-	$(TOP)/hardware/samsung_slsi/exynos/libhwc \
-	$(TOP)/hardware/samsung_slsi/exynos/libhwcutils \
-	$(TOP)/hardware/samsung_slsi/exynos/libdisplay
-
-LOCAL_ADDITIONAL_DEPENDENCIES += \
-	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
-
 ifeq ($(BOARD_HDMI_INCAPABLE), true)
 LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi/exynos/libhdmi_dummy
 else
-ifeq ($(BOARD_USES_NEW_HDMI), true)
-LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi/exynos/libhdmi
-else
-LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi/exynos/libhdmi_legacy
-endif
+LOCAL_C_INCLUDES += $(TOP)/hardware/samsung_slsi/exynos/libvpphdmi
 endif
 
-LOCAL_SRC_FILES := \
-	ExynosExternalDisplayModule.cpp
-
-LOCAL_MODULE := libhdmimodule
-include $(BUILD_SHARED_LIBRARY)
-
-endif
+LOCAL_SRC_FILES += \
+	./../../$(TARGET_SOC)/libhdmimodule/ExynosExternalDisplayModule.cpp
