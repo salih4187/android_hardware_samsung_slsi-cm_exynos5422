@@ -1,4 +1,4 @@
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,32 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq ($(filter-out exynos5,$(TARGET_BOARD_PLATFORM)),)
+LOCAL_SRC_FILES += \
+	./../../$(TARGET_SOC)/libdisplaymodule/ExynosPrimaryDisplay.cpp 
 
-LOCAL_PATH:= $(call my-dir)
-include $(CLEAR_VARS)
-
-LOCAL_SHARED_LIBRARIES := liblog libutils libcutils libexynosutils libexynosv4l2 libsync libhwcutils libexynosgscaler libdisplay libmpp
-
-LOCAL_C_INCLUDES := \
-	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-	$(LOCAL_PATH)/../../exynos5/include \
-	$(TOP)/hardware/samsung_slsi/exynos/include \
-	$(TOP)/hardware/samsung_slsi/exynos/libexynosutils \
-	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/include \
-	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/libhwcmodule \
-	$(TOP)/hardware/samsung_slsi/exynos/libhwc \
-	$(TOP)/hardware/samsung_slsi/exynos/libhwcUtils \
-	$(TOP)/hardware/samsung_slsi/exynos/libdisplay \
-	$(TOP)/hardware/samsung_slsi/exynos/libmpp
-
-LOCAL_ADDITIONAL_DEPENDENCIES += \
-	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
-
-LOCAL_SRC_FILES := \
-	ExynosPrimaryDisplay.cpp
-
-LOCAL_MODULE := libdisplaymodule
-include $(BUILD_SHARED_LIBRARY)
-
+ifeq ($(BOARD_USES_DUAL_DISPLAY), true)
+LOCAL_SRC_FILES += ./../../$(TARGET_SOC)/libdisplaymodule/ExynosSecondaryDisplayModule.cpp
 endif
