@@ -1,4 +1,4 @@
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,34 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifeq ($(filter-out exynos5,$(TARGET_BOARD_PLATFORM)),)
-
-LOCAL_PATH:= $(call my-dir)
-include $(CLEAR_VARS)
-
-LOCAL_SHARED_LIBRARIES := liblog libutils libcutils libexynosutils libexynosv4l2 libsync libdisplay libvirtualdisplay
-
-LOCAL_CFLAGS += -DUSES_VIRTUAL_DISPLAY
-
-LOCAL_C_INCLUDES := \
-	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include \
-	$(LOCAL_PATH)/../../exynos5/include \
-	$(TOP)/hardware/samsung_slsi-cm/exynos/include \
-	$(TOP)/hardware/samsung_slsi-cm/exynos/libexynosutils \
-	$(TOP)/hardware/samsung_slsi-cm/$(TARGET_SOC)/include \
-	$(TOP)/hardware/samsung_slsi-cm/$(TARGET_SOC)/libhwcmodule \
-	$(TOP)/hardware/samsung_slsi-cm/exynos/libhwc \
-	$(TOP)/hardware/samsung_slsi-cm/exynos/libhwcutils \
-	$(TOP)/hardware/samsung_slsi-cm/exynos/libdisplay \
-	$(TOP)/hardware/samsung_slsi-cm/exynos/libvirtualdisplay
-
-LOCAL_ADDITIONAL_DEPENDENCIES += \
-	$(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
-
-LOCAL_SRC_FILES := \
-	ExynosVirtualDisplayModule.cpp
-
-LOCAL_MODULE := libvirtualdisplaymodule
-include $(BUILD_SHARED_LIBRARY)
-
+ifeq ($(BOARD_USES_VDS_BGRA8888), true)
+LOCAL_C_INCLUDES += \
+	$(TOP)/hardware/samsung_slsi/$(TARGET_SOC)/libhwcutilsmodule \
+	$(TOP)/hardware/samsung_slsi/exynos/libmpp
 endif
+
+LOCAL_SRC_FILES += \
+	./../../$(TARGET_SOC)/libvirtualdisplaymodule/ExynosVirtualDisplayModule.cpp
