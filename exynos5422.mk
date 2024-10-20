@@ -1,6 +1,8 @@
 #
 # Copyright (C) 2013 The Android Open Source Project
 #
+# Copyright (C) 2013 The Android Open Source Project
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,10 +18,24 @@
 
 # Video Codecs
 PRODUCT_PACKAGES += \
-	libOMX.Exynos.VP8.Encoder
+	libOMX.Exynos.AVC.Decoder \
+	libOMX.Exynos.AVC.Encoder \
+	libOMX.Exynos.MPEG4.Decoder \
+	libOMX.Exynos.MPEG4.Encoder \
+	libOMX.Exynos.VP8.Decoder \
+	libOMX.Exynos.VP8.Encoder \
+	libOMX.Exynos.WMV.Decoder
 
-# Keymaster
-ifeq ($(BOARD_USES_TRUST_KEYMASTER), true)
+# stagefright and device specific modules
 PRODUCT_PACKAGES += \
-	keystore.exynos5
-endif
+	libstagefrighthw \
+	libExynosOMX_Core \
+	libExynosOMX_Resourcemanager
+
+# others
+PRODUCT_PACKAGES += \
+	libcec \
+	libcsc \
+	libfimg \
+	libion_exynos
+
