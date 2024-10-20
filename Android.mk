@@ -17,25 +17,17 @@
 ifeq ($(TARGET_BOARD_PLATFORM), exynos5)
 ifeq ($(TARGET_SLSI_VARIANT), bsp)
 ifeq ($(TARGET_SOC), exynos5422)
+
 exynos5422_dirs := \
 	mobicore \
-	gralloc \
-	libdisplaymodule \
-	libhwcutilsmodule \
-	libhdmimodule \
-	libhwjpeg \
-	libsecurepath 
+	libkeymaster \
+	libhwjpeg
 
-ifeq ($(BOARD_USES_VIRTUAL_DISPLAY), true)
-exynos5422_dirs += \
-	libvirtualdisplaymodule
+include $(call all-named-subdir-makefiles,$(exynos5422_dirs))
+
 endif
-
-ifeq ($(BOARD_USES_TRUST_KEYMASTER), true)
-exynos5422_dirs += \
-	libkeymaster
 endif
-
+endif
 include $(call all-named-subdir-makefiles,$(exynos5422_dirs))
 
 endif
