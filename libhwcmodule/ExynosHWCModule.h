@@ -18,65 +18,31 @@
 #define ANDROID_EXYNOS_HWC_MODULE_H_
 
 #include <hardware/hwcomposer.h>
-#include "decon_fb.h"
 
 #define VSYNC_DEV_PREFIX "/sys/devices/"
-#define VSYNC_DEV_MIDDLE ""
+#define VSYNC_DEV_MIDDLE "14850000.sysmmu/14850000.sysmmu/"
 #define VSYNC_DEV_NAME  "13800000.decon_fb/vsync"
 
 #define FIMD_WORD_SIZE_BYTES   16
-#define FIMD_BURSTLEN   8
-#define FIMD_ADDED_BURSTLEN_BYTES     4
+#define FIMD_BURSTLEN   16
 #define FIMD_BW_OVERLAP_CHECK
+
+#define TRY_SECOND_VSYNC_DEV
+#ifdef TRY_SECOND_VSYNC_DEV
+#define VSYNC_DEV_NAME2  "exynos5-fb.1/vsync"
+#define VSYNC_DEV_MIDDLE2  "platform/exynos-sysmmu.30/exynos-sysmmu.11/"
+#endif
+
+#define HDMI_RESERVE_MEM_DEV_NAME "/sys/class/ion_cma/ion_video_ext/isolated"
+#define SMEM_PATH "/dev/s5p-smem"
+#define SECMEM_IOC_SET_VIDEO_EXT_PROC   _IOWR('S', 13, int)
+
+#define HWC_VERSION HWC_DEVICE_API_VERSION_1_5
 
 #define DUAL_VIDEO_OVERLAY_SUPPORT
 
-/* Framebuffer API specific defines (decon_fb.h) */
-#define WIN_STATE_DISABLED  s3c_fb_win_config::S3C_FB_WIN_STATE_DISABLED
-#define WIN_STATE_COLOR     s3c_fb_win_config::S3C_FB_WIN_STATE_COLOR
-#define WIN_STATE_BUFFER    s3c_fb_win_config::S3C_FB_WIN_STATE_BUFFER
-#define BLENDING_NONE       S3C_FB_BLENDING_NONE
-#define BLENDING_MAX        S3C_FB_BLENDING_MAX
-#define PIXEL_FORMAT_MAX    S3C_FB_PIXEL_FORMAT_MAX
-
-const size_t SOC_NUM_HW_WINDOWS = S3C_FB_MAX_WIN;
-
-typedef s3c_fb_win_config fb_win_config;
-typedef s3c_fb_win_config_data fb_win_config_data;
-
-inline s3c_fb_blending halBlendingToSocBlending(int32_t blending)
-{
-    switch (blending) {
-        case HWC_BLENDING_NONE:
-            return S3C_FB_BLENDING_NONE;
-        case HWC_BLENDING_PREMULT:
-            return S3C_FB_BLENDING_PREMULT;
-        case HWC_BLENDING_COVERAGE:
-            return S3C_FB_BLENDING_COVERAGE;
-        default:
-            return S3C_FB_BLENDING_MAX;
-    }
-}
-
-inline s3c_fb_pixel_format halFormatToSocFormat(int format)
-{
-    switch (format) {
-        case HAL_PIXEL_FORMAT_RGBA_8888:
-            return S3C_FB_PIXEL_FORMAT_RGBA_8888;
-        case HAL_PIXEL_FORMAT_RGBX_8888:
-            return S3C_FB_PIXEL_FORMAT_RGBX_8888;
-        case HAL_PIXEL_FORMAT_RGB_565:
-            return S3C_FB_PIXEL_FORMAT_RGB_565;
-        case HAL_PIXEL_FORMAT_BGRA_8888:
-            return S3C_FB_PIXEL_FORMAT_BGRA_8888;
-#ifdef EXYNOS_SUPPORT_BGRX_8888
-        case HAL_PIXEL_FORMAT_BGRX_8888:
-            return S3C_FB_PIXEL_FORMAT_BGRX_8888;
-#endif
-        default:
-            return S3C_FB_PIXEL_FORMAT_MAX;
-    }
-}
+/* Max number windows available in Exynos5422 is 5. */
+#define NUM_AVAILABLE_HW_WINDOWS	5
 
 #ifdef FIMD_BW_OVERLAP_CHECK
 const size_t MAX_NUM_FIMD_DMA_CH = 2;
@@ -103,24 +69,35 @@ inline void fimd_bw_overlap_limits_init(int xres, int yres,
 }
 #endif
 
-const size_t GSC_DST_W_ALIGNMENT_RGB888 = 16;
+const size_t GSC_DST_W_ALIGNMENT_RGB888 = 1;
 const size_t GSC_DST_CROP_W_ALIGNMENT_RGB888 = 1;
 const size_t GSC_W_ALIGNMENT = 16;
 const size_t GSC_H_ALIGNMENT = 16;
 const size_t GSC_DST_H_ALIGNMENT_RGB888 = 1;
+
 const size_t FIMD_GSC_IDX = 0;
-const size_t FIMD_GSC_SEC_IDX = 1;
+const size_t FIMD_EXT_MPP_IDX = 0;
+/* HDMI_GSC_IDX is not used but added for build issue */
 const size_t HDMI_GSC_IDX = 2;
-#ifdef USES_VIRTUAL_DISPLAY
-const size_t WFD_GSC_IDX = 3;
-#else
-const size_t WFD_GSC_DRM_IDX = 3;
-#endif
-const int FIMD_GSC_USAGE_IDX[] = {FIMD_GSC_IDX, FIMD_GSC_SEC_IDX};
-#ifdef USES_VIRTUAL_DISPLAY
-const int AVAILABLE_GSC_UNITS[] = { 0, 1, 1, 1 };
-#else
-const int AVAILABLE_GSC_UNITS[] = { 0, 1, 1, 5 };
-#endif
+const size_t HDMI_EXT_MPP_IDX = 2;
+const size_t WFD_GSC_IDX = 1;
+const size_t WFD_EXT_MPP_IDX = 1;
+
+const int FIMD_GSC_USAGE_IDX[] = {FIMD_GSC_IDX};
+const int AVAILABLE_GSC_UNITS[] = { 0, 1};
+
+#define MPP_VG          0
+#define MPP_VGR         2
+#define MPP_MSC         4
+#define MPP_MSC_1	5
+
+#define EXTERNAL_MPPS   2
+
+struct exynos_mpp_t {
+    int type;
+    unsigned int index;
+};
+
+const exynos_mpp_t AVAILABLE_EXTERNAL_MPP_UNITS[] = {{MPP_MSC, 0}, {MPP_MSC_1, 0} };
 
 #endif
