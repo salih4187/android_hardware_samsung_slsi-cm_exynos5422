@@ -19,16 +19,9 @@ ifeq ($(TARGET_SLSI_VARIANT), bsp)
 ifeq ($(TARGET_SOC), exynos5422)
 
 exynos5422_dirs := \
-        gralloc \
 	mobicore \
-	libkeymaster \
-	libhwjpeg
+	libkeymaster
 
-include $(call all-named-subdir-makefiles,$(exynos5422_dirs))
-
-endif
-endif
-endif
 include $(call all-named-subdir-makefiles,$(exynos5422_dirs))
 
 endif
